@@ -12,7 +12,6 @@ class PetClassifierApp:
         self.root.geometry("600x600")
         self.root.configure(bg='#f0f0f0')
 
-        # Load the trained model
         try:
             print("Attempting to load model...")
             self.model = tf.keras.models.load_model("dog_vs_cat_classifier.h5")
@@ -23,11 +22,10 @@ class PetClassifierApp:
             self.root.destroy()
             return
 
-        # Create GUI elements
         self.create_widgets()
 
     def create_widgets(self):
-        # Title
+        
         title_label = tk.Label(
             self.root,
             text="Dog vs Cat Classifier",
@@ -36,7 +34,7 @@ class PetClassifierApp:
         )
         title_label.pack(pady=10)
 
-        # Image display area
+  
         self.image_frame = tk.Frame(self.root, bg='white', width=300, height=300, relief='solid', borderwidth=1)
         self.image_frame.pack(pady=10)
         self.image_frame.pack_propagate(False)
@@ -44,7 +42,7 @@ class PetClassifierApp:
         self.image_label = tk.Label(self.image_frame, bg='white')
         self.image_label.pack(expand=True, fill='both')
 
-        # Buttons
+        
         self.browse_button = tk.Button(
             self.root, text="Browse Image", command=self.browse_image, font=("Arial", 12), width=15
         )
@@ -55,7 +53,6 @@ class PetClassifierApp:
         )
         self.classify_button.pack(pady=10)
 
-        # Result display area
         self.result_frame = tk.Frame(self.root, bg='#f0f0f0')
         self.result_frame.pack(pady=20)
 
@@ -90,7 +87,7 @@ class PetClassifierApp:
                 photo = ImageTk.PhotoImage(image)
 
                 self.image_label.configure(image=photo)
-                self.image_label.image = photo  # Keep a reference
+                self.image_label.image = photo  
                 self.current_image_path = file_path
                 self.classify_button.configure(state=tk.NORMAL)
 
