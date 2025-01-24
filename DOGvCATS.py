@@ -5,11 +5,11 @@ from tensorflow.keras import layers, models
 import pandas as pd
 import numpy as np
 
-# Step 1: Define dataset paths
+
 train_dir = 'data/train'
 test_dir = 'data/test1'
 
-# Step 2: Data Preprocessing
+
 train_datagen = ImageDataGenerator(
     rescale=1.0 / 255,
     rotation_range=20,
@@ -37,7 +37,6 @@ validation_generator = train_datagen.flow_from_directory(
     subset="validation"
 )
 
-# Step 3: Build the CNN Model
 def create_model():
     model = models.Sequential([
         layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
@@ -53,7 +52,7 @@ def create_model():
     ])
     return model
 
-# Create and compile the model
+
 model = create_model()
 model.compile(
     optimizer='adam',
@@ -61,7 +60,7 @@ model.compile(
     metrics=['accuracy']
 )
 
-# Step 4: Train the Model
+
 print("Training the model...")
 history = model.fit(
     train_generator,
@@ -69,12 +68,12 @@ history = model.fit(
     validation_data=validation_generator
 )
 
-# Step 5: Evaluate the Model
+
 print("\nEvaluating the model on the validation set...")
 validation_loss, validation_accuracy = model.evaluate(validation_generator)
 print(f"Validation Accuracy: {validation_accuracy:.2f}")
 
-# Step 6: Prediction Function
+
 def predict_in_batches(model, test_dir, batch_size=32):
     test_filenames = sorted([f for f in os.listdir(test_dir) 
                            if f.endswith(('.jpg', '.jpeg'))])
@@ -103,7 +102,7 @@ def predict_in_batches(model, test_dir, batch_size=32):
                 print(f"Error processing {filename}: {str(e)}")
                 continue
         
-        if batch_images:  # Only process if we have images in the batch
+        if batch_images:  
             batch_images = np.array(batch_images)
             batch_predictions = model.predict(batch_images, verbose=0)
             all_predictions.extend(batch_predictions)
@@ -112,26 +111,25 @@ def predict_in_batches(model, test_dir, batch_size=32):
     
     return np.array(all_predictions), file_ids
 
-# Step 7: Process Test Images
 print("\nProcessing test images in batches...")
 predictions, file_ids = predict_in_batches(model, test_dir)
 
 if predictions is not None:
     predicted_classes = [1 if pred > 0.5 else 0 for pred in predictions]
     
-    # Create DataFrame for submission
+    
     submission_df = pd.DataFrame({
         'id': file_ids,
         'label': predicted_classes
     })
     
-    # Sort by id to ensure correct order
+    
     submission_df = submission_df.sort_values('id')
     
-    # Save predictions
+ 
     submission_df.to_csv('updated_sampleSubmission.csv', index=False)
     print("\nPredictions saved to 'updated_sampleSubmission.csv'.")
 
-# Step 8: Save the Model
+#
 model.save("dog_vs_cat_classifier.h5")
 print("Model saved as 'dog_vs_cat_classifier.h5'.")
